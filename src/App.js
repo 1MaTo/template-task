@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Task from './components/Task'
 import Fab from '@material-ui/core/Fab';
@@ -81,20 +81,11 @@ function App() {
   const [db, setDB] = useState([...JSONdb])
   const [openEditTask, setOpenEditTask] = useState(false)
   const [taskDataToUpdate, setTaskDataToUpdate] = useState(null)
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
   const addTask = (data) => {
     if (data) {
       const updateIndex = db.findIndex(element => element.id === data.id)
       if (updateIndex !== -1) {
-/*         const newDB = [...db]
-        newDB[updateIndex] = {
-          id: data.id,
-          name: data.name,
-          description: data.description,
-          status: data.status,
-          isDeleted: data.isDeleted
-        } */
         const newData = update(db, {
           [updateIndex]: {$merge: data}
         })
@@ -105,7 +96,6 @@ function App() {
     }
     setTaskDataToUpdate(null)
     setOpenEditTask(false)
-    forceUpdate()
   }
 
   const openForm = (dataToUpdate) => {

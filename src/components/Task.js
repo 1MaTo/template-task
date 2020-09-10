@@ -10,7 +10,6 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, red } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import EditableTask from './EditableTask'
 
 const CompleteButton = withStyles((theme) => ({
   root: {
@@ -64,9 +63,6 @@ function Task({ data, handleUpdateTask }) {
   const deleteTask = () => {
     setInfo({ ...taskInfo, isDeleted: true })
   }
-
-  console.log('sdas')
-  console.log(data)
 
   return (
     isLoading ? <></> :
