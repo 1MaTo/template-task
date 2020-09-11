@@ -117,15 +117,15 @@ function App() {
 
   return (
     <div className={classes.root}>
-      {db.map(task => {
-        return <Task key={task.id} data={task} handleUpdateTask={openForm} />
-      })}
-      <Fab
-        className={classes.fab} aria-label="add"
-        onClick={() => openForm(null)}>
-        <AddIcon />
-      </Fab>
       <Suspense fallback={<Loading />}>
+        {db.map(task => {
+          return <Task key={task.id} data={task} handleUpdateTask={openForm} />
+        })}
+        <Fab
+          className={classes.fab} aria-label="add"
+          onClick={() => openForm(null)}>
+          <AddIcon />
+        </Fab>
         <EditableTask taskDataToUpdate={taskDataToUpdate} open={openEditTask} handleClose={addTask} />
       </Suspense>
     </div>
