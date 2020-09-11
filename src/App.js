@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import './App.css';
 import Task from './components/Task'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import EditableTask from './components/EditableTask'
 import update from 'react-addons-update';
+const EditableTask = lazy(() => import('./components/EditableTask'));
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    background: '#eeeeee',
     position: 'relative',
     width: '100%',
     height: '100vh',
@@ -87,7 +88,7 @@ function App() {
       const updateIndex = db.findIndex(element => element.id === data.id)
       if (updateIndex !== -1) {
         const newData = update(db, {
-          [updateIndex]: {$merge: data}
+          [updateIndex]: { $merge: data }
         })
         setDB([...newData])
       } else {
@@ -108,6 +109,12 @@ function App() {
     }
   }
 
+  const Loading = () => {
+    return (
+      <div>Loading...</div>
+    )
+  }
+
   return (
     <div className={classes.root}>
       {db.map(task => {
@@ -118,7 +125,9 @@ function App() {
         onClick={() => openForm(null)}>
         <AddIcon />
       </Fab>
-      <EditableTask taskDataToUpdate={taskDataToUpdate} open={openEditTask} handleClose={addTask} />
+      <Suspense fallback={<Loading />}>
+        <EditableTask taskDataToUpdate={taskDataToUpdate} open={openEditTask} handleClose={addTask} />
+      </Suspense>
     </div>
   );
 }
