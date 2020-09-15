@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/template-task/static/css/main.5f361e03.chunk.css",
+    "main.css": "/template-task/static/css/main.1734c300.chunk.css",
     "main.js": "/template-task/static/js/main.8e57a97b.chunk.js",
     "main.js.map": "/template-task/static/js/main.8e57a97b.chunk.js.map",
     "runtime-main.js": "/template-task/static/js/runtime-main.53d7e5c6.js",
@@ -12,15 +12,15 @@
     "static/js/4.5a33cad7.chunk.js": "/template-task/static/js/4.5a33cad7.chunk.js",
     "static/js/4.5a33cad7.chunk.js.map": "/template-task/static/js/4.5a33cad7.chunk.js.map",
     "index.html": "/template-task/index.html",
-    "precache-manifest.effc0520f881b94f790a48115bd1eebf.js": "/template-task/precache-manifest.effc0520f881b94f790a48115bd1eebf.js",
+    "precache-manifest.ea12bd49182105fa0d74d1e0fcef7484.js": "/template-task/precache-manifest.ea12bd49182105fa0d74d1e0fcef7484.js",
     "service-worker.js": "/template-task/service-worker.js",
-    "static/css/main.5f361e03.chunk.css.map": "/template-task/static/css/main.5f361e03.chunk.css.map",
+    "static/css/main.1734c300.chunk.css.map": "/template-task/static/css/main.1734c300.chunk.css.map",
     "static/js/2.a61baf34.chunk.js.LICENSE.txt": "/template-task/static/js/2.a61baf34.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.53d7e5c6.js",
     "static/js/2.a61baf34.chunk.js",
-    "static/css/main.5f361e03.chunk.css",
+    "static/css/main.1734c300.chunk.css",
     "static/js/main.8e57a97b.chunk.js"
   ]
 }
