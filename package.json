@@ -13,7 +13,9 @@
     "react": "^16.13.1",
     "react-addons-update": "^15.6.2",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "workbox-routing": "^5.1.4",
+    "workbox-strategies": "^5.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
