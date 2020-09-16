@@ -10,6 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, red } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { displayNotification } from '../notifications'
 
 const CompleteButton = withStyles((theme) => ({
   root: {
@@ -58,10 +59,12 @@ function Task({ data, handleUpdateTask }) {
 
   const completeTask = () => {
     setInfo({ ...taskInfo, status: "Завершено" })
+    displayNotification('😃 Ты завершил задание 😃')
   }
 
   const deleteTask = () => {
     setInfo({ ...taskInfo, isDeleted: true })
+    displayNotification('😯 Ты удалил задание 😯')
   }
 
   return (

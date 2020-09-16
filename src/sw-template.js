@@ -4,7 +4,7 @@ if (typeof importScripts === 'function') {
   /* global workbox */
   if (workbox) {
     console.log('Workbox is loaded');
-    
+
 
     // Like Imports
     const { registerRoute } = workbox.routing;
@@ -13,11 +13,6 @@ if (typeof importScripts === 'function') {
     const { setCacheNameDetails, skipWaiting } = workbox.core;
     const { setConfig } = workbox
 
-
-    setConfig({
-      debug: true,
-    })
-    
     skipWaiting();
 
     setCacheNameDetails({
@@ -36,6 +31,13 @@ if (typeof importScripts === 'function') {
         cacheName: 'SWR-template-task'
       })
     )
+
+    self.addEventListener('notificationclick', (e) => {
+      let { notification, action } = e
+      if (action === 'close') {
+        notification.close()
+      }
+    })
   } else {
     // console.log('Workbox could not be loaded. No Offline support');
   }
