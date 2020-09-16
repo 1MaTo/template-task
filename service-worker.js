@@ -4,7 +4,7 @@ if (typeof importScripts === 'function') {
   /* global workbox */
   if (workbox) {
     console.log('Workbox is loaded');
-    
+
 
     // Like Imports
     const { registerRoute } = workbox.routing;
@@ -12,7 +12,7 @@ if (typeof importScripts === 'function') {
     const { precacheAndRoute } = workbox.precaching;
     const { setCacheNameDetails, skipWaiting } = workbox.core;
     const { setConfig } = workbox
-    
+
     skipWaiting();
 
     setCacheNameDetails({
@@ -23,7 +23,7 @@ if (typeof importScripts === 'function') {
       googleAnalytics: 'template-google-analytics-name'
     })
 
-    precacheAndRoute([{"revision":"669654cf0fd7d467e8abca62394da15f","url":"index.html"},{"revision":"ff6a1f227489baab4a63677a0430b433","url":"precache-manifest.ff6a1f227489baab4a63677a0430b433.js"},{"revision":"1f95f3acbbd94dbfb19f47282b70183c","url":"static/css/main.cf595d69.chunk.css"},{"revision":"aff82506238a96728c367da08fad6803","url":"static/js/2.a61baf34.chunk.js"},{"revision":"373ba821abfa26a6743a755ef206197b","url":"static/js/3.9a99ce19.chunk.js"},{"revision":"669f9613136504f4f74a6939a2c0adbc","url":"static/js/4.5a33cad7.chunk.js"},{"revision":"ffccda80d61bfea81767cb489b716af2","url":"static/js/main.e79d2ae6.chunk.js"},{"revision":"23c0e5743a9537ce3de57b01df319130","url":"static/js/runtime-main.53d7e5c6.js"}]);
+    precacheAndRoute([{"revision":"ee9657e96b2ce7bebc154d8713267d07","url":"index.html"},{"revision":"db661aec0ae01e6f1896fae0d1f72ed8","url":"precache-manifest.db661aec0ae01e6f1896fae0d1f72ed8.js"},{"revision":"1f95f3acbbd94dbfb19f47282b70183c","url":"static/css/main.cf595d69.chunk.css"},{"revision":"aff82506238a96728c367da08fad6803","url":"static/js/2.a61baf34.chunk.js"},{"revision":"373ba821abfa26a6743a755ef206197b","url":"static/js/3.9a99ce19.chunk.js"},{"revision":"669f9613136504f4f74a6939a2c0adbc","url":"static/js/4.5a33cad7.chunk.js"},{"revision":"00693115b1e42d29e3b9dc4f325f1ac9","url":"static/js/main.10ee8e6d.chunk.js"},{"revision":"23c0e5743a9537ce3de57b01df319130","url":"static/js/runtime-main.53d7e5c6.js"}]);
 
     registerRoute(
       'https://jsonplaceholder.typicode.com/todos/1',
@@ -31,6 +31,13 @@ if (typeof importScripts === 'function') {
         cacheName: 'SWR-template-task'
       })
     )
+
+    self.addEventListener('notificationclick', (e) => {
+      let { notification, action } = e
+      if (action === 'close') {
+        notification.close()
+      }
+    })
   } else {
     // console.log('Workbox could not be loaded. No Offline support');
   }
