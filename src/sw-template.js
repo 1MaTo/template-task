@@ -32,11 +32,39 @@ if (typeof importScripts === 'function') {
       })
     )
 
+    // Handle Notifications' actions
     self.addEventListener('notificationclick', (e) => {
       let { notification, action } = e
       if (action === 'close') {
         notification.close()
       }
+    })
+
+    self.addEventListener('push', function (e) {
+      let body;
+
+      if (e.data) {
+        body = e.data.text()
+      } else {
+        body = 'Нет информации о сообщении'
+      }
+      let options = {
+        body: body,
+        icon: 'favicon.ico',
+        vibrate: [100, 50, 100],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: 1
+        },
+        actions: [
+          {
+            action: 'close', title: 'Закрыть'
+          }
+        ],
+      }
+      e.waitUntil(
+        self.registration.showNotification('Новое уведомление 😎', options)
+      )
     })
   } else {
     // console.log('Workbox could not be loaded. No Offline support');
