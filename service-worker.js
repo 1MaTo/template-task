@@ -12,11 +12,6 @@ if (typeof importScripts === 'function') {
     const { precacheAndRoute } = workbox.precaching;
     const { setCacheNameDetails, skipWaiting } = workbox.core;
     const { setConfig } = workbox
-
-
-    setConfig({
-      debug: true,
-    })
     
     skipWaiting();
 
