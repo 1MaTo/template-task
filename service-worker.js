@@ -4,6 +4,7 @@ if (typeof importScripts === 'function') {
   if (workbox) {
     console.log('Workbox is loaded');
     workbox.core.skipWaiting();
+    workbox.setConfig({debug : true})
 
     workbox.core.setCacheNameDetails({
       prefix: 'template-task',
