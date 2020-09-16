@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useEffect } from 'react';
 import './App.css';
 import Task from './components/Task'
 import Fab from '@material-ui/core/Fab';
@@ -82,6 +82,12 @@ function App() {
   const [db, setDB] = useState([...JSONdb])
   const [openEditTask, setOpenEditTask] = useState(false)
   const [taskDataToUpdate, setTaskDataToUpdate] = useState(null)
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/todos/1')
+      .then(response => response.json())
+      .then(json => console.log(json))
+  }, [])
 
   const addTask = (data) => {
     if (data) {
