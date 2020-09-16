@@ -3,9 +3,8 @@ if (typeof importScripts === 'function') {
   /* global workbox */
   if (workbox) {
     console.log('Workbox is loaded');
-    workbox.core.skipWaiting();
     workbox.setConfig({debug : true})
-
+    workbox.core.skipWaiting();
     workbox.core.setCacheNameDetails({
       prefix: 'template-task',
       suffix: 'v1',
