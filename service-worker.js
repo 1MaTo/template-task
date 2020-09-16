@@ -4,13 +4,21 @@ if (typeof importScripts === 'function') {
   /* global workbox */
   if (workbox) {
     console.log('Workbox is loaded');
-    workbox.core.skipWaiting();
+    
 
     // Like Imports
     const { registerRoute } = workbox.routing;
     const { StaleWhileRevalidate } = workbox.strategies;
     const { precacheAndRoute } = workbox.precaching;
-    const { setCacheNameDetails } = workbox.core;
+    const { setCacheNameDetails, skipWaiting } = workbox.core;
+    const { setConfig } = workbox
+
+
+    setConfig({
+      debug: true,
+    })
+    
+    skipWaiting();
 
     setCacheNameDetails({
       prefix: 'template-task',
