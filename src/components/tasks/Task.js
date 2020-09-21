@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { green, red } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { displayNotification } from '../notifications'
+import { displayNotification } from '../../notifications'
 
 const CompleteButton = withStyles((theme) => ({
   root: {
@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Task({ data, handleUpdateTask }) {
+export const Task = ({ data, handleUpdateTask }) => {
   const classes = useStyles()
 
   const [taskInfo, setInfo] = useState(data)
@@ -91,5 +91,3 @@ function Task({ data, handleUpdateTask }) {
         </Card>
   );
 }
-
-export default Task;

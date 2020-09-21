@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -16,6 +16,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import { toggleEditForm } from '../../redux/reducers/tasksSlice'
+import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -41,33 +43,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function EditableTask({ open, handleClose, taskDataToUpdate }) {
-    useEffect(() => {
-        if (taskDataToUpdate) {
-            setData(taskDataToUpdate)
-        } else {
-            setData({
-                name: '',
-                description: '',
-                status: ''
-            })
-        }
-    }, [taskDataToUpdate])
+export const EditableTask = ({ open, id }) => {
 
     const classes = useStyles();
-    const [data, setData] = useState({
-        name: '',
-        description: '',
-        status: ''
-    })
+    const dispatch = useDispatch();
+
     const [errors, setErrors] = useState({
         name: false,
         description: false,
         status: false,
     })
-    const handleChange = (event, field) => {
-        setData({ ...data, [field]: event.target.value })
-    }
+
+    const [data, setData] = useState({
+        name: '',
+        description: '',
+        status: ''
+    })
 
     const handleConfirm = () => {
         let error = {}
@@ -84,48 +75,32 @@ function EditableTask({ open, handleClose, taskDataToUpdate }) {
         if (detectErrors.find(el => el === true)) {
             setErrors(error)
         } else {
-
-            saveData()
+            setErrors({
+                name: false,
+                description: false,
+                status: false,
+            })
+            dispatch(toggleEditForm())
         }
-
     }
 
-    const saveData = () => {
-        setErrors({
-            name: false,
-            description: false,
-            status: false,
-        })
-        if (taskDataToUpdate) {
-            handleClose({ ...data })
-        } else {
-            handleClose({
-                id: Math.floor(Math.random() * Math.floor(100000)) + '',
-                ...data,
-                isDeleted: false,
-            })
-        }
-
-        setData({
-            name: '',
-            description: '',
-            status: ''
-        })
+    const handleChange = (event, field) => {
+        setData({ ...data, [field]: event.target.value })
     }
 
     return (
-        <Dialog fullScreen open={open} onClose={() => handleClose()} TransitionComponent={Transition}>
+        <Dialog fullScreen open={open} onClose={() => { }} TransitionComponent={Transition} >
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={() => handleClose()}
+                        onClick={() => dispatch(toggleEditForm())}
                         aria-label="close">
                         <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                        {taskDataToUpdate ? "Изменить задание" : "Новое задание"}
+                        {id ? "Изменить задание" : "Новое задание"}
                     </Typography>
                     <Button autoFocus color="inherit" onClick={handleConfirm}>
                         Сохранить
@@ -160,15 +135,12 @@ function EditableTask({ open, handleClose, taskDataToUpdate }) {
                         value={data.status}
                         onChange={(e) => handleChange(e, 'status')}
                     >
-
                         <MenuItem value={'В процессе'}>В процессе</MenuItem>
                         <MenuItem value={'Завершено'}>Завершено</MenuItem>
                     </Select>
                     <FormHelperText>{errors.status && 'Поле не должно быть пустым'}</FormHelperText>
                 </FormControl>
             </Container>
-        </Dialog>
+        </Dialog >
     );
 }
-
-export default EditableTask;

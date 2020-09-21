@@ -1,12 +1,13 @@
-import React, { useState, lazy, Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import './App.css';
-import Task from './components/Task'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { makeStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-import update from 'react-addons-update';
-const EditableTask = lazy(() => import('./components/EditableTask'));
+import { TasksList } from './components/tasks/TasksList';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleEditForm } from './redux/reducers/tasksSlice'
+import { EditableTask } from './components/tasks/EditableTaskForm'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,88 +33,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const JSONdb = [
-  {
-    id: "1",
-    name: "Task1",
-    status: "В процессе",
-    description: "Особое задание для продвинутых",
-    isDeleted: false,
-  },
-  {
-    id: "2",
-    name: "Task2",
-    status: "В процессе",
-    description: "Очень простое задание",
-    isDeleted: false,
-  },
-  {
-    id: "3",
-    name: "Task3",
-    status: "В процессе",
-    description: "Тут нужно подумать",
-    isDeleted: false,
-  },
-  {
-    id: "4",
-    name: "Task4",
-    status: "В процессе",
-    description: "Особое задание для продвинутых",
-    isDeleted: false,
-  },
-  {
-    id: "5",
-    name: "Task5",
-    status: "В процессе",
-    description: "Очень простое задание",
-    isDeleted: false,
-  },
-  {
-    id: "6",
-    name: "Task6",
-    status: "В процессе",
-    description: "Тут нужно подумать",
-    isDeleted: false,
-  },
-]
 
 function App() {
   const classes = useStyles();
-  const [db, setDB] = useState([...JSONdb])
-  const [openEditTask, setOpenEditTask] = useState(false)
-  const [taskDataToUpdate, setTaskDataToUpdate] = useState(null)
+  const isFormOpen = useSelector(store => store.tasks.openEditForm)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/todos/1')
       .then(response => response.json())
       .then(json => console.log(json))
+    /* requestUpdate()
+      .then(response => {
+        setDB(response.body)
+      })
+      .catch(error => {
+        console.log(error)
+      }) */
   }, [])
 
-  const addTask = (data) => {
-    if (data) {
-      const updateIndex = db.findIndex(element => element.id === data.id)
-      if (updateIndex !== -1) {
-        const newData = update(db, {
-          [updateIndex]: { $merge: data }
-        })
-        setDB([...newData])
-      } else {
-        setDB([...db, data])
-      }
-    }
-    setTaskDataToUpdate(null)
-    setOpenEditTask(false)
-  }
 
-  const openForm = (dataToUpdate) => {
-    if (dataToUpdate) {
-      setTaskDataToUpdate(dataToUpdate)
-      setOpenEditTask(true)
-    } else {
-      setTaskDataToUpdate(null)
-      setOpenEditTask(true)
-    }
-  }
 
   const Loading = () => {
     return (
@@ -124,15 +63,13 @@ function App() {
   return (
     <div className={classes.root}>
       <Suspense fallback={<Loading />}>
-        {db.map(task => {
-          return <Task key={task.id} data={task} handleUpdateTask={openForm} />
-        })}
+        <TasksList />
         <Fab
           className={classes.fab} aria-label="add"
-          onClick={() => openForm(null)}>
+          onClick={() => dispatch(toggleEditForm())}>
           <AddIcon />
         </Fab>
-        <EditableTask taskDataToUpdate={taskDataToUpdate} open={openEditTask} handleClose={addTask} />
+        <EditableTask open={isFormOpen} />
       </Suspense>
     </div>
   );
