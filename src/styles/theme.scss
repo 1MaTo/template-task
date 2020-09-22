@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+$open-sans: 'Open Sans', sans-serif;
+
+$primary-light: #ffffff;
+$primary-main: #e0e0e0;
+$primary-dark:#aeaeae;
+
+$primary-text: #000000;
+
+$secondary-light:#8d8d8d;
+$secondary-main:#606060;
+$secondary-dark: #363636;
+
+$secondary-text: #ffffff;
+
+:export {
+    primaryLight: $primary-light;
+    primaryMain: $primary-main;
+    primaryDark: $primary-dark;
+
+    primaryText: $primary-text;
+
+    secondaryLight: $secondary-light;
+    secondaryMain: $secondary-main;
+    secondaryDark: $secondary-dark;
+
+    secondaryText: $secondary-text;
+}
