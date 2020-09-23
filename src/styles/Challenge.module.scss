@@ -1,0 +1,17 @@
+@import './theme.scss';
+
+.background {
+    max-width: 400px;
+    background: $primary-main;
+    cursor: default;
+    height: fit-content;
+    margin-top: 20px;
+}
+
+.challengeInfo {
+    margin-top: 10px;
+}
+
+.acceptButton {
+    margin: auto;
+}

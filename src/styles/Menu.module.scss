@@ -1,0 +1,14 @@
+@import './theme.scss';
+
+.background {
+    position: fixed;
+    width: 100vw;
+    bottom: 0;
+    z-index: 1;
+    background: $secondary-dark;
+}
+
+.item {
+    color: $primary-dark;
+    margin: auto;
+}

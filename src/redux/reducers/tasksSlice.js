@@ -1,63 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    openEditForm: false,
-    elements: [
-        {
-            id: "1",
-            name: "Task1",
-            status: "В процессе",
-            description: "Особое задание для продвинутых",
-            isDeleted: false,
-        },
-        {
-            id: "2",
-            name: "Task2",
-            status: "В процессе",
-            description: "Очень простое задание",
-            isDeleted: false,
-        },
-        {
-            id: "3",
-            name: "Task3",
-            status: "В процессе",
-            description: "Тут нужно подумать",
-            isDeleted: false,
-        },
-        {
-            id: "4",
-            name: "Task4",
-            status: "В процессе",
-            description: "Особое задание для продвинутых",
-            isDeleted: false,
-        },
-        {
-            id: "5",
-            name: "Task5",
-            status: "В процессе",
-            description: "Очень простое задание",
-            isDeleted: false,
-        },
-        {
-            id: "6",
-            name: "Task6",
-            status: "В процессе",
-            description: "Тут нужно подумать",
-            isDeleted: false,
-        },
-    ],
+    elements: []
 }
 
 const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
-        toggleEditForm: state => {
-            state.openEditForm = !state.openEditForm
+        addTask: (state, action) => {
+            state.elements = [...state.elements, action.payload]
+        },
+        updateTasks: (state, action) => {
+            state.elements = action.payload
+        },
+        updateReport: (state, action) => {
+            const { _id, report, images } = action.payload
+            const existingTask = state.elements.find(task => task._id === _id)
+            if (existingTask) {
+                existingTask.report = report
+                existingTask.images = images
+            }
+        },
+        updateTaskState: (state, action) => {
+            const existingTask = state.elements.find(task => task._id === action.payload._id)
+            if (existingTask) {
+                existingTask.state = action.payload.state
+            }
         }
     }
 })
 
-export const { toggleEditForm } = tasksSlice.actions
+export const { toggleEditForm, updateTasks, addTask, updateReport, updateTaskState } = tasksSlice.actions
 
 export default tasksSlice.reducer

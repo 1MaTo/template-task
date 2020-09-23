@@ -1,11 +1,11 @@
 import React from 'react'
-import { ChallengesList } from '../components/challenges/ChallengesList'
 import { Menu } from '../components/menu/Menu'
+import { TasksList } from '../components/tasks/TasksList'
 
-export const Challenges = () => {
+export const Tasks = () => {
 
     return <React.Fragment>
         <Menu />
-        <ChallengesList />
+        <TasksList />
     </React.Fragment>
 }

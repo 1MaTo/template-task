@@ -27,3 +27,42 @@ export const ChallengesRequest = () =>
         .catch(err => {
             return false
         })
+
+export const AcceptChallengeRequest = (data) =>
+    axios.post('challenges/accept', data)
+        .then(response => {
+            if (response.status === 201) {
+                return response.data
+            } else {
+                return false
+            }
+        })
+        .catch(err => {
+            return false
+        })
+
+export const TasksRequest = (id) =>
+    axios.get(`tasks/user/${id}`)
+        .then(response => {
+            if (response.status === 200) {
+                return response.data
+            } else {
+                return false
+            }
+        })
+        .catch(err => {
+            return false
+        })
+
+export const UpdateTaskRequest = (task) =>
+    axios.put(`tasks/`, task)
+        .then(response => {
+            if (response.status === 200) {
+                return response.data
+            } else {
+                return false
+            }
+        })
+        .catch(err => {
+            return false
+        })
