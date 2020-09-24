@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-export const LoginRequest = ({ name, code }) =>
-    axios.get('/users')
+export const LoginRequest = ({ name, code }) => {
+    return axios.get('/users')
         .then(response => {
             if (response.status === 200) {
                 const user = response.data.find(user => user.name === name && user.code === code)
@@ -14,6 +14,21 @@ export const LoginRequest = ({ name, code }) =>
         .catch(err => {
             return false
         })
+}
+
+export const LoginByIdRequest = (id) => {
+    return axios.get(`/users/${id}`)
+        .then(response => {
+            if (response.status === 200) {
+                return response.data
+            } else {
+                return false
+            }
+        })
+        .catch(err => {
+            return false
+        })
+}
 
 export const ChallengesRequest = () =>
     axios.get('/challenges')

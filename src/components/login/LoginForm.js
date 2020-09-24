@@ -1,13 +1,30 @@
 import { Button, TextField, Typography } from '@material-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from '../../styles/LoginForm.module.scss'
-import { LoginRequest } from '../../requests/Request'
+import { LoginByIdRequest, LoginRequest } from '../../requests/Request'
 import { useDispatch } from 'react-redux'
 import { logIn } from '../../redux/reducers/userSlice'
+import { getUserId, setUserId } from '../../db/dbApi'
 
 export const LoginForm = () => {
 
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        getUserId()
+            .then(id => {
+                if (id) {
+                    LoginByIdRequest(id)
+                        .then(user => {
+                            setUserId(user._id)
+                            dispatch(logIn(user))
+                        })
+                } else {
+                    setUserId(null)
+                }
+            })
+    }, [])
+
     const [loginData, setLoginData] = useState({
         name: '',
         code: ''
@@ -32,6 +49,7 @@ export const LoginForm = () => {
             LoginRequest(loginData)
                 .then(user => {
                     if (user) {
+                        setUserId(user._id)
                         dispatch(logIn(user))
                     } else {
                         setErr({
