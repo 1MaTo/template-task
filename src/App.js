@@ -1,26 +1,32 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Login } from './pages/Login'
-import { AuthRoute } from './AuthRoute'
+import { PrivateRoute, PublicRoute } from './AuthRoute'
 import { Challenges } from './pages/Challenges'
 import {
   BrowserRouter as Router,
   Redirect,
-  Switch,
-} from 'react-router-dom'
+  Switch} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { TasksRequest } from './requests/Request';
+import { LoginByIdRequest, TasksRequest } from './requests/Request';
 import { updateTasks } from './redux/reducers/tasksSlice';
 import { Tasks } from './pages/Tasks';
+import { getUserId, setUserId } from './db/dbApi';
+import { logIn, updateUser } from './redux/reducers/userSlice';
+import { Loading } from './components/loading/Loading';
+import { PagesConstructor } from './PagesConstructor';
 
 const App = () => {
 
-  const isLogin = useSelector(state => state.user.user)
+  const isLogin = useSelector(state => state.user.isLogin)
+  const userId = useSelector(state => state.user.user && state.user.user._id)
+
+  const [isLoading, setLoading] = useState(true)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (isLogin) {
-      TasksRequest(isLogin._id)
+      TasksRequest(userId)
         .then(tasks => {
           if (tasks) {
             dispatch(updateTasks(tasks))
@@ -29,15 +35,37 @@ const App = () => {
     }
   }, [isLogin])
 
+  useEffect(() => {
+    getUserId()
+      .then(id => {
+        if (id) {
+          LoginByIdRequest(id)
+            .then(user => {
+              if (user) {
+                dispatch(updateUser(user))
+                dispatch(logIn())
+                setLoading(false)
+              } else {
+                setUserId(null)
+                setLoading(false)
+              }
+            })
+        } else {
+          setLoading(false)
+        }
+      })
+  }, [isLogin])
+
   return (
-    <Router>
-      <Switch>
-        <AuthRoute type='guest' path="/login" render={Login} />
-        <AuthRoute type='private' path="/challenges" render={Challenges} />
-        <AuthRoute type='private' path="/tasks" render={Tasks} />
-        <Redirect to="/login"/>
-      </Switch>
-    </Router>
+    isLoading ? <Loading /> :
+      <Router>
+        <Switch>
+          <PublicRoute restricted={true} component={Login} path="/login" exact />
+          <PrivateRoute component={PagesConstructor} page={Tasks} path="/tasks" exact />
+          <PrivateRoute component={PagesConstructor} page={Challenges} path="/challenges" exact />
+          <Redirect to="/login"/>
+        </Switch>
+      </Router>
   );
 }
 

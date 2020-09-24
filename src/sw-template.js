@@ -7,11 +7,10 @@ if (typeof importScripts === 'function') {
 
 
     // Like Imports
-    const { registerRoute } = workbox.routing;
+    const { registerRoute, NavigationRoute } = workbox.routing;
     const { StaleWhileRevalidate } = workbox.strategies;
-    const { precacheAndRoute } = workbox.precaching;
+    const { precacheAndRoute, createHandlerBoundToURL } = workbox.precaching;
     const { setCacheNameDetails, skipWaiting } = workbox.core;
-    const { setConfig } = workbox
 
     skipWaiting();
 
@@ -25,10 +24,20 @@ if (typeof importScripts === 'function') {
 
     precacheAndRoute(self.__WB_MANIFEST);
 
-    registerRoute(
-      'https://jsonplaceholder.typicode.com/todos/1',
+    // handler for caching SPA routing
+    const handler = createHandlerBoundToURL('/index.html')
+    const navigationRoute = new NavigationRoute(handler)
+    registerRoute(navigationRoute,
       new StaleWhileRevalidate({
-        cacheName: 'SWR-template-task'
+        cacheName: 'shell'
+      })
+    )
+
+    // cache api responses
+    registerRoute(
+      new RegExp('http://127.0.0.1:3000/.*'),
+      new StaleWhileRevalidate({
+        cacheName: 'api'
       })
     )
 

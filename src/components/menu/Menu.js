@@ -9,7 +9,8 @@ import { Link } from 'react-router-dom';
 
 
 export const Menu = () => {
-    const [page, setPage] = useState('challenges');
+
+    const [page, setPage] = useState('tasks');
 
     const handlePageChange = (event, newValue) => {
         setPage(newValue);

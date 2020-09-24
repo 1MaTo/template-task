@@ -10,11 +10,11 @@ const userSlice = createSlice({
     initialState,
     reducers: {
         logIn: (state, action) => {
-            state.user = action.payload
+            //state.user = action.payload
             state.isLogin = true
         },
         logOut: state => {
-            state.user = null
+            //state.user = null
             state.isLogin = false
         },
         updateUser: (state, action) => {

@@ -1,5 +1,3 @@
-
-
 export const displayNotification = (text) => {
     if (Notification.permission === 'granted') {
         navigator.serviceWorker.getRegistration().then((reg) => {

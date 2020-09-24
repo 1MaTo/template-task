@@ -1,29 +1,14 @@
 import { Button, TextField, Typography } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import styles from '../../styles/LoginForm.module.scss'
-import { LoginByIdRequest, LoginRequest } from '../../requests/Request'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { logIn } from '../../redux/reducers/userSlice'
-import { getUserId, setUserId } from '../../db/dbApi'
+import { setUserId } from '../../db/dbApi'
+import { logIn, updateUser } from '../../redux/reducers/userSlice'
+import { LoginRequest } from '../../requests/Request'
+import styles from '../../styles/LoginForm.module.scss'
 
 export const LoginForm = () => {
 
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        getUserId()
-            .then(id => {
-                if (id) {
-                    LoginByIdRequest(id)
-                        .then(user => {
-                            setUserId(user._id)
-                            dispatch(logIn(user))
-                        })
-                } else {
-                    setUserId(null)
-                }
-            })
-    }, [])
 
     const [loginData, setLoginData] = useState({
         name: '',
@@ -50,7 +35,8 @@ export const LoginForm = () => {
                 .then(user => {
                     if (user) {
                         setUserId(user._id)
-                        dispatch(logIn(user))
+                        dispatch(updateUser(user))
+                        dispatch(logIn())
                     } else {
                         setErr({
                             name: true,
