@@ -20,7 +20,12 @@ export const Challenge = ({ data }) => {
     const dispatch = useDispatch()
 
     const userId = useSelector(state => state.user.user._id)
-    const acceptedChallenges = useSelector(state => state.tasks.elements.map(task => task.challenge._id))
+    const acceptedChallenges = useSelector(
+        state => state.tasks.elements.map(task => {
+            if (task.state !== "Cancelled") {
+                return task.challenge._id
+            }
+        }))
 
     const handleAcceptChallenge = () => {
         AcceptChallengeRequest({

@@ -55,19 +55,30 @@ export const Task = ({ data }) => {
         setExpanded(!expanded)
     }
 
-    const handleCompleteTask = () => {
+    const handleUpdateTaskState = (state) => {
+
         const taskToUpdate = {
             _id: data._id,
             userId: data.user,
             challengeId: data.challenge._id,
-            state: "Moderation",
+            state: state,
             report: data.report,
             images: data.images,
             score: data.score
         }
+        if (state === "Cancelled") {
+            taskToUpdate.report = ''
+            taskToUpdate.imagex = []
+            setReportData({
+                ...reportData,
+                report: '',
+                images: []
+            })
+        }
         UpdateTaskRequest(taskToUpdate)
             .then(task => {
                 if (task) {
+                    setExpanded(false)
                     dispatch(updateTaskState(task))
                 } else {
                     console.log('task doesnt update')
@@ -91,7 +102,6 @@ export const Task = ({ data }) => {
                 images: reportData.images,
                 score: data.score
             }
-            console.log(taskToUpdate)
             UpdateTaskRequest(taskToUpdate)
                 .then(task => {
                     if (task) {
@@ -158,8 +168,8 @@ export const Task = ({ data }) => {
             </CardContent>
             <CardActions>
                 <Button
-                    disabled={data.state !== "InProgress" || (!data.report || !data.images ||data.report.length === 0 || data.images.length === 0)}
-                    onClick={handleCompleteTask}
+                    disabled={data.state !== "InProgress" || (!data.report || !data.images || data.report.length === 0 || data.images.length === 0)}
+                    onClick={() => handleUpdateTaskState("Moderation")}
                     className={styles.acceptButton}
                     variant="contained"
                     color="secondary">
@@ -196,6 +206,15 @@ export const Task = ({ data }) => {
                         color="secondary"
                         disabled={isSave || data.state !== "InProgress"}>
                         Сохранить
+                    </Button>
+                    <Button
+                        size="small"
+                        onClick={() => handleUpdateTaskState("Cancelled")}
+                        className={styles.saveReportButton}
+                        variant="outlined"
+                        color="secondary"
+                        disabled={data.state !== "InProgress"}>
+                        Отказаться от челенджа
                     </Button>
                 </CardContent>
             </Collapse>
