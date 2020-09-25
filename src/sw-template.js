@@ -6,13 +6,21 @@ if (typeof importScripts === 'function') {
     console.log('Workbox is loaded');
 
 
+    // TO FORCE UPDATE SERVICE WORKER IF NEW DETECED
+    self.addEventListener("install", async (event) => {
+      self.skipWaiting();
+    });
+
+    // TO FORCE APP USING ROUTING RIGHT AFTER FIRST LOADING
+    self.addEventListener('activate', function (event) {
+      event.waitUntil(self.clients.claim());
+    });
+
     // Like Imports
     const { registerRoute, NavigationRoute } = workbox.routing;
     const { StaleWhileRevalidate } = workbox.strategies;
     const { precacheAndRoute, createHandlerBoundToURL } = workbox.precaching;
-    const { setCacheNameDetails, skipWaiting } = workbox.core;
-
-    skipWaiting();
+    const { setCacheNameDetails, cacheNames } = workbox.core;
 
     setCacheNameDetails({
       prefix: 'template-task',
@@ -25,13 +33,9 @@ if (typeof importScripts === 'function') {
     precacheAndRoute(self.__WB_MANIFEST);
 
     // handler for caching SPA routing
-    const handler = createHandlerBoundToURL('/index.html')
+    const handler = createHandlerBoundToURL('index.html')
     const navigationRoute = new NavigationRoute(handler)
-    registerRoute(navigationRoute,
-      new StaleWhileRevalidate({
-        cacheName: 'shell'
-      })
-    )
+    registerRoute(navigationRoute)
 
     // cache api responses
     registerRoute(
@@ -76,6 +80,6 @@ if (typeof importScripts === 'function') {
       )
     })
   } else {
-    // console.log('Workbox could not be loaded. No Offline support');
+    console.log('Workbox could not be loaded. No Offline support');
   }
 }
