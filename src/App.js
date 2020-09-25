@@ -5,7 +5,8 @@ import { Challenges } from './pages/Challenges'
 import {
   BrowserRouter as Router,
   Redirect,
-  Switch} from 'react-router-dom'
+  Switch
+} from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
 import { LoginByIdRequest, TasksRequest } from './requests/Request';
 import { updateTasks } from './redux/reducers/tasksSlice';
@@ -14,6 +15,7 @@ import { getUserId, setUserId } from './db/dbApi';
 import { logIn, updateUser } from './redux/reducers/userSlice';
 import { Loading } from './components/loading/Loading';
 import { PagesConstructor } from './PagesConstructor';
+
 
 const App = () => {
 
@@ -24,6 +26,7 @@ const App = () => {
 
   const dispatch = useDispatch()
 
+  // load tasks if id exist
   useEffect(() => {
     if (isLogin) {
       TasksRequest(userId)
@@ -35,6 +38,8 @@ const App = () => {
     }
   }, [isLogin])
 
+
+  // Auto login if id exist
   useEffect(() => {
     getUserId()
       .then(id => {
@@ -63,7 +68,7 @@ const App = () => {
           <PublicRoute restricted={true} component={Login} path="/login" exact />
           <PrivateRoute component={PagesConstructor} page={Tasks} path="/tasks" exact />
           <PrivateRoute component={PagesConstructor} page={Challenges} path="/challenges" exact />
-          <Redirect to="/login"/>
+          <Redirect to="/login" />
         </Switch>
       </Router>
   );

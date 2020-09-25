@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { saveChallenges } from '../../db/dbApi'
 
 const initialState = {
     items: []
@@ -10,6 +11,7 @@ const challengesSLice = createSlice({
     reducers: {
         update: (state, action) => {
             state.items = [...action.payload]
+            saveChallenges(action.payload)
         }
     }
 })

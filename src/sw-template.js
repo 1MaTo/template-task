@@ -18,9 +18,11 @@ if (typeof importScripts === 'function') {
 
     // Like Imports
     const { registerRoute, NavigationRoute } = workbox.routing;
-    const { StaleWhileRevalidate } = workbox.strategies;
+    const { StaleWhileRevalidate, NetworkFirst, NetworkOnly } = workbox.strategies;
     const { precacheAndRoute, createHandlerBoundToURL } = workbox.precaching;
-    const { setCacheNameDetails, cacheNames } = workbox.core;
+    const { setCacheNameDetails } = workbox.core;
+    const { BackgroundSyncPlugin } = workbox.backgroundSync;
+    const { BroadcastUpdatePlugin } =  workbox.broadcastUpdate;
 
     setCacheNameDetails({
       prefix: 'template-task',
@@ -37,12 +39,30 @@ if (typeof importScripts === 'function') {
     const navigationRoute = new NavigationRoute(handler)
     registerRoute(navigationRoute)
 
-    // cache api responses
+    // Background sync settings
+    const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
+      maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+    });
+
+    // cache GET api responses
     registerRoute(
-      new RegExp('http://127.0.0.1:3000/.*'),
+      new RegExp('http://01e8ac634d41.ngrok.io/.*'),
       new StaleWhileRevalidate({
-        cacheName: 'api'
-      })
+        cacheName: 'api',
+        plugins: [
+          new BroadcastUpdatePlugin(),
+        ],
+      }),
+      'GET'
+    )
+
+    //Post request to background sync
+    registerRoute(
+      new RegExp('http://01e8ac634d41.ngrok.io/.*'),
+      new NetworkOnly({
+        plugins: [bgSyncPlugin]
+      }),
+      'POST'
     )
 
     // Handle Notifications' actions
