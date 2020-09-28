@@ -56,29 +56,29 @@ if (typeof importScripts === 'function') {
           'GET'
         ) */
 
-    /*     registerRoute(
-          new RegExp('http://9861898cc3b4.ngrok.io/.*'),
-          new NetworkFirst({
-            cacheName: 'api'
-          }),
-          'GET'
-        ) */
-
     registerRoute(
-      new RegExp('http://9861898cc3b4.ngrok.io/challenges'),
-      async ({ url, event, params }) => {
-        let db;
-        let request = indexedDB.open('db', 10)
-        request.onsuccess = function (event) {
-          db = request.result
-          let transaction = db.transaction('challenges', 'readonly')
-          let objectStore = transaction.objectStore('challenges')
-          objectStore.getAll().onsuccess = (e) => { return (new Response([1, 2], { status: 200 })) }
-        }
-        new Response([1, 2], { status: 200 })
-      },
+      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+      new NetworkFirst({
+        cacheName: 'api'
+      }),
       'GET'
     )
+
+    /*     registerRoute(
+          new RegExp('http://9861898cc3b4.ngrok.io/challenges'),
+          async ({ url, event, params }) => {
+            let db;
+            let request = indexedDB.open('db', 10)
+            request.onsuccess = function (event) {
+              db = request.result
+              let transaction = db.transaction('challenges', 'readonly')
+              let objectStore = transaction.objectStore('challenges')
+              objectStore.getAll().onsuccess = (e) => { return (new Response([1, 2], { status: 200 })) }
+            }
+            new Response([1, 2], { status: 200 })
+          },
+          'GET'
+        ) */
 
     //Post request to background sync
     registerRoute(
