@@ -16,13 +16,26 @@ export const setUserId = (id) => {
 }
 
 export const saveTasks = (tasks) => {
-    return db.tasks.bulkAdd([...tasks])
-        .then(() => true)
-        .cath(err => console.log(err))
+    db.tasks.clear()
+    return db.tasks.bulkPut([...tasks])
+}
+
+export const saveTask = (task) => {
+    return db.tasks.put(task)
+}
+
+export const updateTask = (_id, report, images, state) => {
+    return db.tasks.update(_id, {report: report, images: [...images], state: state})
 }
 
 export const saveChallenges = (challenges) => {
+    db.tasks.clear()
     return db.challenges.bulkPut([...challenges])
+}
+
+export const getTasks = () => {
+    return db.tasks.get()
+        .toArray()
 }
 
 export const getChallenges = () => {

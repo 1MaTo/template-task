@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getChallenges, getTasks } from '../db/dbApi'
 
 export const LoginRequest = ({ name, code }) => {
     return axios.get('/users')
@@ -30,18 +31,21 @@ export const LoginByIdRequest = (id) => {
         })
 }
 
-export const ChallengesRequest = () =>
-    axios.get('/challenges')
-        .then(response => {
-            if (response.status === 200) {
-                return response.data
-            } else {
+export const ChallengesRequest = () => {
+    return navigator.onLine ?
+        axios.get('/challenges')
+            .then(response => {
+                if (response.status === 200) {
+                    return response.data
+                } else {
+                    return false
+                }
+            })
+            .catch(err => {
                 return false
-            }
-        })
-        .catch(err => {
-            return false
-        })
+            }) :
+        getChallenges()
+}
 
 export const AcceptChallengeRequest = (data) =>
     axios.post('challenges/accept', data)
@@ -56,18 +60,21 @@ export const AcceptChallengeRequest = (data) =>
             return false
         })
 
-export const TasksRequest = (id) =>
-    axios.get(`tasks/user/${id}`)
-        .then(response => {
-            if (response.status === 200) {
-                return response.data
-            } else {
+export const TasksRequest = (id) => {
+    return navigator.onLine ?
+        axios.get(`tasks/user/${id}`)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.data
+                } else {
+                    return false
+                }
+            })
+            .catch(err => {
                 return false
-            }
-        })
-        .catch(err => {
-            return false
-        })
+            }) :
+        getTasks()
+}
 
 export const UpdateTaskRequest = (task) =>
     axios.put(`tasks/`, task)

@@ -75,6 +75,8 @@ export const Task = ({ data }) => {
                 images: []
             })
         }
+        setExpanded(false)
+        dispatch(updateTaskState(taskToUpdate))
         UpdateTaskRequest(taskToUpdate)
             .then(task => {
                 if (task) {
@@ -102,12 +104,14 @@ export const Task = ({ data }) => {
                 images: reportData.images,
                 score: data.score
             }
+            //Update task locally before sending request
+            dispatch(updateReport(reportData))
+            setIsSaved(true)
             UpdateTaskRequest(taskToUpdate)
                 .then(task => {
                     if (task) {
                         dispatch(updateReport(reportData))
                         setIsSaved(true)
-                        setExpanded(!expanded)
                     } else {
                         console.log('task doesnt update')
                     }

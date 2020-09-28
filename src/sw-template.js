@@ -22,7 +22,7 @@ if (typeof importScripts === 'function') {
     const { precacheAndRoute, createHandlerBoundToURL } = workbox.precaching;
     const { setCacheNameDetails } = workbox.core;
     const { BackgroundSyncPlugin } = workbox.backgroundSync;
-    const { BroadcastUpdatePlugin } =  workbox.broadcastUpdate;
+    const { BroadcastUpdatePlugin } = workbox.broadcastUpdate;
 
     setCacheNameDetails({
       prefix: 'template-task',
@@ -44,25 +44,58 @@ if (typeof importScripts === 'function') {
       maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
     });
 
-    // cache GET api responses
+    // cache GET api responses SWR with BroadCastUpdate
+    /*     registerRoute(
+          new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+          new StaleWhileRevalidate({
+            cacheName: 'api',
+            plugins: [
+              new BroadcastUpdatePlugin(),
+            ],
+          }),
+          'GET'
+        ) */
+
+    /*     registerRoute(
+          new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+          new NetworkFirst({
+            cacheName: 'api'
+          }),
+          'GET'
+        ) */
+
     registerRoute(
-      new RegExp('http://01e8ac634d41.ngrok.io/.*'),
-      new StaleWhileRevalidate({
-        cacheName: 'api',
-        plugins: [
-          new BroadcastUpdatePlugin(),
-        ],
-      }),
+      new RegExp('http://9861898cc3b4.ngrok.io/challenges'),
+      async ({ url, event, params }) => {
+        let db;
+        let request = indexedDB.open('db', 10)
+        request.onsuccess = function (event) {
+          db = request.result
+          let transaction = db.transaction('challenges', 'readonly')
+          let objectStore = transaction.objectStore('challenges')
+          objectStore.getAll().onsuccess = (e) => { return (new Response([1, 2], { status: 200 })) }
+        }
+        new Response([1, 2], { status: 200 })
+      },
       'GET'
     )
 
     //Post request to background sync
     registerRoute(
-      new RegExp('http://01e8ac634d41.ngrok.io/.*'),
+      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
       new NetworkOnly({
         plugins: [bgSyncPlugin]
       }),
       'POST'
+    )
+
+    //Put request to background sync
+    registerRoute(
+      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+      new NetworkOnly({
+        plugins: [bgSyncPlugin]
+      }),
+      'PUT'
     )
 
     // Handle Notifications' actions

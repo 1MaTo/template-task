@@ -8,13 +8,14 @@ import {
   Switch
 } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { LoginByIdRequest, TasksRequest } from './requests/Request';
+import { ChallengesRequest, LoginByIdRequest, TasksRequest } from './requests/Request';
 import { updateTasks } from './redux/reducers/tasksSlice';
 import { Tasks } from './pages/Tasks';
 import { getUserId, setUserId } from './db/dbApi';
 import { logIn, updateUser } from './redux/reducers/userSlice';
 import { Loading } from './components/loading/Loading';
 import { PagesConstructor } from './PagesConstructor';
+import { update } from './redux/reducers/challengesSlice';
 
 
 const App = () => {
@@ -26,9 +27,13 @@ const App = () => {
 
   const dispatch = useDispatch()
 
-  // load tasks if id exist
+  // load tasks challenges if id exist
   useEffect(() => {
     if (isLogin) {
+      ChallengesRequest()
+            .then(challenges => {
+                dispatch(update(challenges))
+            })
       TasksRequest(userId)
         .then(tasks => {
           if (tasks) {

@@ -28,6 +28,7 @@ export const Challenge = ({ data }) => {
         }))
 
     const handleAcceptChallenge = () => {
+        //dispatch(addTask({ _id: Date.now(), user: userId, state: "InProgress", score: 0, challenge: data, report: '', images: [] }))
         AcceptChallengeRequest({
             challengeId: data._id,
             userId: userId
