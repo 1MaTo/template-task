@@ -29,7 +29,7 @@ export const updateTask = (_id, report, images, state) => {
 }
 
 export const saveChallenges = (challenges) => {
-    db.tasks.clear()
+    db.challenges.clear()
     return db.challenges.bulkPut([...challenges])
 }
 

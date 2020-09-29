@@ -5,6 +5,8 @@ if (typeof importScripts === 'function') {
   if (workbox) {
     console.log('Workbox is loaded');
 
+    const serverUrl = 'http://f1f45c525785.ngrok.io'
+
 
     // TO FORCE UPDATE SERVICE WORKER IF NEW DETECED
     self.addEventListener("install", async (event) => {
@@ -55,34 +57,59 @@ if (typeof importScripts === 'function') {
           }),
           'GET'
         ) */
-
     registerRoute(
-      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+      new RegExp(`${serverUrl}/users.*`),
       new NetworkFirst({
         cacheName: 'api'
       }),
       'GET'
     )
 
-    /*     registerRoute(
-          new RegExp('http://9861898cc3b4.ngrok.io/challenges'),
-          async ({ url, event, params }) => {
-            let db;
-            let request = indexedDB.open('db', 10)
-            request.onsuccess = function (event) {
-              db = request.result
-              let transaction = db.transaction('challenges', 'readonly')
-              let objectStore = transaction.objectStore('challenges')
-              objectStore.getAll().onsuccess = (e) => { return (new Response([1, 2], { status: 200 })) }
-            }
-            new Response([1, 2], { status: 200 })
-          },
-          'GET'
-        ) */
+    //Handler and route for using indexedDB as data storage for failed request
+    const networkOnly = new NetworkOnly();
+    const offlineHandler = async (params) => {
+      try {
+        return await networkOnly.handle(params);
+      } catch (error) {
+        let table;
+        if (params.url.pathname.includes('challenges')) {
+          table = 'challenges'
+        } else if (params.url.pathname.includes('tasks')) {
+          table = 'tasks'
+        }
+        let init = { "status": 200, "statusText": "indexedDB" }
+        const data = await getDataFromBd(table)
+        return new Response(JSON.stringify(data), init)
+      }
+    }
+    registerRoute(
+      new RegExp(`${serverUrl}/challenges`),
+      offlineHandler,
+      'GET'
+    )
+    registerRoute(
+      new RegExp(`${serverUrl}/tasks.*`),
+      offlineHandler,
+      'GET'
+    )
+
+    // This function get data from indexedDB
+    const getDataFromBd = (table) => new Promise((resolve, reject) => {
+      let db;
+      let request = indexedDB.open('db', 10)
+      request.onsuccess = function (event) {
+        db = request.result
+        let transaction = db.transaction(table, 'readonly')
+        let objectStore = transaction.objectStore(table)
+        objectStore.getAll().onsuccess = (e) => {
+          resolve(e.target.result)
+        }
+      }
+    })
 
     //Post request to background sync
     registerRoute(
-      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+      new RegExp(`${serverUrl}/.*`),
       new NetworkOnly({
         plugins: [bgSyncPlugin]
       }),
@@ -91,7 +118,7 @@ if (typeof importScripts === 'function') {
 
     //Put request to background sync
     registerRoute(
-      new RegExp('http://9861898cc3b4.ngrok.io/.*'),
+      new RegExp(`${serverUrl}/.*`),
       new NetworkOnly({
         plugins: [bgSyncPlugin]
       }),
