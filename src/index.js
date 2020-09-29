@@ -9,7 +9,7 @@ import './styles/global.scss'
 import { ThemeProvider, StylesProvider, createMuiTheme } from '@material-ui/core/styles'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://f1f45c525785.ngrok.io'
+axios.defaults.baseURL = 'https://f1f45c525785.ngrok.io'
 
 
 //Handler for BroadCastUpdate

@@ -5,7 +5,7 @@ if (typeof importScripts === 'function') {
   if (workbox) {
     console.log('Workbox is loaded');
 
-    const serverUrl = 'http://f1f45c525785.ngrok.io'
+    const serverUrl = 'https://f1f45c525785.ngrok.io'
 
 
     // TO FORCE UPDATE SERVICE WORKER IF NEW DETECED
