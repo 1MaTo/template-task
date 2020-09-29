@@ -3,10 +3,9 @@ import { db } from './TempateDB'
 export const getUserId = () => {
     return db.user.get('singleUserId').then(user => {
         return user._id
+    }).catch(err => {
+        console.log(err)
     })
-        .catch(err => {
-            console.log(err)
-        })
 }
 
 export const setUserId = (id) => {
@@ -25,7 +24,7 @@ export const saveTask = (task) => {
 }
 
 export const updateTask = (_id, report, images, state) => {
-    return db.tasks.update(_id, {report: report, images: [...images], state: state})
+    return db.tasks.update(_id, { report: report, images: [...images], state: state })
 }
 
 export const saveChallenges = (challenges) => {

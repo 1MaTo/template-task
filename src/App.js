@@ -31,9 +31,9 @@ const App = () => {
   useEffect(() => {
     if (isLogin) {
       ChallengesRequest()
-            .then(challenges => {
-                dispatch(update(challenges))
-            })
+        .then(challenges => {
+          dispatch(update(challenges))
+        })
       TasksRequest(userId)
         .then(tasks => {
           if (tasks) {
@@ -68,11 +68,11 @@ const App = () => {
 
   return (
     isLoading ? <Loading /> :
-      <Router>
+      <Router basename="/template-task">
         <Switch>
-          <PublicRoute restricted={true} component={Login} path="/login" exact />
-          <PrivateRoute component={PagesConstructor} page={Tasks} path="/tasks" exact />
-          <PrivateRoute component={PagesConstructor} page={Challenges} path="/challenges" exact />
+          <PublicRoute restricted={true} component={Login} path="/login" />
+          <PrivateRoute component={PagesConstructor} page={Tasks} path="/tasks" />
+          <PrivateRoute component={PagesConstructor} page={Challenges} path="/challenges" />
           <Redirect to="/login" />
         </Switch>
       </Router>
