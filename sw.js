@@ -36,7 +36,7 @@ if (typeof importScripts === 'function') {
     })
 
     //Cache static assets
-    precacheAndRoute([{"revision":"33729ddee5fed97b27a2e4b24c093830","url":"icon-225.png"},{"revision":"75bde381690642fd3618f06a163f2f48","url":"index.html"},{"revision":"edb62b0062571798fcc2ab4a452467b6","url":"ios/apple-touch-icon-ipad-76x76.png"},{"revision":"07ffb905479e966cd1c899d4d7ffde26","url":"ios/apple-touch-icon-ipad-retina-152x152.png"},{"revision":"ba2972e850b75b8e654cf251c9c390a1","url":"ios/apple-touch-icon-iphone-60x60.png"},{"revision":"039fa93bc09b7f9f6d0d19ca2ca01695","url":"ios/apple-touch-icon-iphone-retina-120x120.png"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"ios/logo192.png"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"fa475a310988e49259131ead7e91ac04","url":"maskable_icon.png"},{"revision":"d4b752a4a4c46659db37839915f689bd","url":"precache-manifest.d4b752a4a4c46659db37839915f689bd.js"},{"revision":"b1f5d5fe0b5118099469cae0565251bb","url":"service-worker.js"},{"revision":"a506b73beb7e501dc35d45f02eb6eb60","url":"splashscreens/ipad_splash.png"},{"revision":"02fc4c75a3673e899b5faa10cd7b3712","url":"splashscreens/ipadpro1_splash.png"},{"revision":"9f87cf0e467d1908f5db983aa7cea4d9","url":"splashscreens/ipadpro2_splash.png"},{"revision":"f24a560a2243ed1fe9d6a0f231b3b4f7","url":"splashscreens/iphone5_splash.png"},{"revision":"a35449b40d186435183b832bd6b0658b","url":"splashscreens/iphone6_splash.png"},{"revision":"852fa97b404865dae0ff2642d65a2f2c","url":"splashscreens/iphoneplus_splash.png"},{"revision":"2b253628f1b77bdf08b26b468fe3d9ca","url":"splashscreens/iphonex_splash.png"},{"revision":"c63d7c5e54fb9f170fd1a7b0268d6624","url":"static/css/main.01af5a9e.chunk.css"},{"revision":"790bde4453a4ffa6d9cf526ae001d032","url":"static/js/2.d2f85dbe.chunk.js"},{"revision":"437d61c66253f19df3b12a6e2494dd13","url":"static/js/main.4693f5f0.chunk.js"},{"revision":"960f6224d174cb07f8a4b56714925f5f","url":"static/js/runtime-main.8cd61495.js"}]);
+    precacheAndRoute([{"revision":"33729ddee5fed97b27a2e4b24c093830","url":"icon-225.png"},{"revision":"843ec68bebde9382ddc2b94b921f505d","url":"index.html"},{"revision":"edb62b0062571798fcc2ab4a452467b6","url":"ios/apple-touch-icon-ipad-76x76.png"},{"revision":"07ffb905479e966cd1c899d4d7ffde26","url":"ios/apple-touch-icon-ipad-retina-152x152.png"},{"revision":"ba2972e850b75b8e654cf251c9c390a1","url":"ios/apple-touch-icon-iphone-60x60.png"},{"revision":"039fa93bc09b7f9f6d0d19ca2ca01695","url":"ios/apple-touch-icon-iphone-retina-120x120.png"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"ios/logo192.png"},{"revision":"33dbdd0177549353eeeb785d02c294af","url":"logo192.png"},{"revision":"917515db74ea8d1aee6a246cfbcc0b45","url":"logo512.png"},{"revision":"fa475a310988e49259131ead7e91ac04","url":"maskable_icon.png"},{"revision":"110e0dfd776757496ce55aba4ebb984b","url":"precache-manifest.110e0dfd776757496ce55aba4ebb984b.js"},{"revision":"d1f0fe465d5957a19903aade3b953d86","url":"service-worker.js"},{"revision":"a506b73beb7e501dc35d45f02eb6eb60","url":"splashscreens/ipad_splash.png"},{"revision":"02fc4c75a3673e899b5faa10cd7b3712","url":"splashscreens/ipadpro1_splash.png"},{"revision":"9f87cf0e467d1908f5db983aa7cea4d9","url":"splashscreens/ipadpro2_splash.png"},{"revision":"f24a560a2243ed1fe9d6a0f231b3b4f7","url":"splashscreens/iphone5_splash.png"},{"revision":"a35449b40d186435183b832bd6b0658b","url":"splashscreens/iphone6_splash.png"},{"revision":"852fa97b404865dae0ff2642d65a2f2c","url":"splashscreens/iphoneplus_splash.png"},{"revision":"2b253628f1b77bdf08b26b468fe3d9ca","url":"splashscreens/iphonex_splash.png"},{"revision":"c63d7c5e54fb9f170fd1a7b0268d6624","url":"static/css/main.01af5a9e.chunk.css"},{"revision":"790bde4453a4ffa6d9cf526ae001d032","url":"static/js/2.d2f85dbe.chunk.js"},{"revision":"402d3ed454d0e450878c20baa557c771","url":"static/js/main.29958f01.chunk.js"},{"revision":"960f6224d174cb07f8a4b56714925f5f","url":"static/js/runtime-main.8cd61495.js"}]);
 
     // handler for caching SPA routing like /tasks and /challenges
     const handler = createHandlerBoundToURL('index.html')
@@ -46,14 +46,6 @@ if (typeof importScripts === 'function') {
     // Background sync settings
     const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
       maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
-      onSync: async ({queue}) => {
-        try {
-          queue.replayRequests()
-          newContentNotification()
-        } catch (error) {
-          throw new Error(error)
-        }
-      }
     });
 
     // cache GET api responses SWR with BroadCastUpdate
@@ -163,7 +155,6 @@ if (typeof importScripts === 'function') {
     self.addEventListener('notificationclick', (e) => {
       e.notification.close()
       e.waitUntil(clients.matchAll({ type: 'window' }).then(clientsArr => {
-        console.log('sdsd')
         // If a Window tab matching the targeted URL already exists, focus that;
         const hadWindowToFocus = clientsArr.some(windowClient => windowClient.url === e.notification.data.url ? (windowClient.focus(), true) : false);
         // Otherwise, open a new tab to the applicable URL and focus it.
@@ -185,8 +176,7 @@ if (typeof importScripts === 'function') {
 
     // Subscribe on sync event
     self.addEventListener('sync', function(event) {
-      console.log(event)
-      if (event.tag === 'apiQueue') {
+      if (event.tag === 'workbox-background-sync:apiQueue') {
         event.waitUntil(newContentNotification())
       }
     })
