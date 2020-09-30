@@ -15,6 +15,7 @@ export const setUserId = (id) => {
 }
 
 export const saveTasks = (tasks) => {
+    console.log(tasks)
     db.tasks.clear()
     return db.tasks.bulkPut([...tasks])
 }
@@ -40,4 +41,18 @@ export const getTasks = () => {
 export const getChallenges = () => {
     return db.challenges.get()
         .toArray()
+}
+
+export const saveChallengesQueue = (queue) => {
+    console.log(queue)
+    return db.challengesQueue.add(queue)
+}
+
+export const getChallengesQueue = () => {
+    return db.challengesQueue.get()
+        .toArray()
+}
+
+export const clearChallengesQueue = () => {
+    return db.challengesQueue.clear()
 }

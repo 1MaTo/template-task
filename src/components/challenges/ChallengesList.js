@@ -5,6 +5,7 @@ import { ChallengesRequest } from '../../requests/Request'
 import { Challenge } from './Challenge'
 import { Loading } from '../loading/Loading'
 import styles from '../../styles/ChallengesList.module.scss'
+import { setOnlineStatus } from '../../redux/reducers/userSlice'
 
 export const ChallengesList = () => {
 
@@ -12,8 +13,14 @@ export const ChallengesList = () => {
 
     useEffect(() => {
         ChallengesRequest()
-            .then(challenges => {
-                dispatch(update(challenges))
+            .then(({ data, connetionStatus }) => {
+                console.log('tut')
+                if (connetionStatus === "offline") {
+                    dispatch(setOnlineStatus(false))
+                } else {
+                    dispatch(setOnlineStatus(true))
+                }
+                dispatch(update(data))
             })
     }, [])
 

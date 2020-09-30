@@ -9,6 +9,8 @@ import styles from '../../styles/Challenge.module.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { AcceptChallengeRequest } from '../../requests/Request'
 import { addTask } from '../../redux/reducers/tasksSlice';
+import { addChallengeToQueue, clearPandingQueue } from '../../redux/reducers/challengesSlice';
+import { setOnlineStatus } from '../../redux/reducers/userSlice';
 
 export const Challenge = ({ data }) => {
 
@@ -18,6 +20,8 @@ export const Challenge = ({ data }) => {
     }
 
     const dispatch = useDispatch()
+
+    const isPending = useSelector(state => state.challenges.pendingQueue && state.challenges.pendingQueue.indexOf(data._id) !== -1)
 
     const userId = useSelector(state => state.user.user._id)
     const acceptedChallenges = useSelector(
@@ -33,9 +37,17 @@ export const Challenge = ({ data }) => {
             challengeId: data._id,
             userId: userId
         }).then(task => {
-            if (task) {
+            if (typeof task === "object") {
                 dispatch(addTask({ ...task, score: 0, challenge: data, report: '', images: [] }))
+                clearPandingQueue(true)
             } else {
+                if (typeof task === "string" && task === "offline") {
+                    dispatch(addChallengeToQueue(data._id))
+                    dispatch(setOnlineStatus(false))
+                } else {
+                    dispatch(setOnlineStatus(true))
+                    clearPandingQueue()
+                }
                 console.log('err to add task')
             }
         })
@@ -72,8 +84,8 @@ export const Challenge = ({ data }) => {
                     className={styles.acceptButton}
                     variant="contained"
                     color="secondary"
-                    disabled={acceptedChallenges.indexOf(data._id) !== -1}>
-                    {acceptedChallenges.indexOf(data._id) === -1 ?
+                    disabled={isPending || acceptedChallenges.indexOf(data._id) !== -1}>
+                    {isPending ? 'Челендж будет взят при подключении к интернету' : acceptedChallenges.indexOf(data._id) === -1 ?
                         'Принять челендж' : 'Вы уже взяли этот челендж'}
                 </Button>
             </CardActions>

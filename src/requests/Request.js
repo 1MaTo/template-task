@@ -31,11 +31,11 @@ export const LoginByIdRequest = (id) => {
         })
 }
 
-export const ChallengesRequest = () => {
-    return axios.get('/challenges')
+export const ChallengesRequest = () =>
+    axios.get('/challenges')
         .then(response => {
             if (response.status === 200) {
-                return response.data
+                return {data: response.data, connetionStatus: response.statusText}
             } else {
                 return false
             }
@@ -43,7 +43,6 @@ export const ChallengesRequest = () => {
         .catch(err => {
             return false
         })
-}
 
 export const AcceptChallengeRequest = (data) =>
     axios.post('challenges/accept', data)
@@ -58,8 +57,8 @@ export const AcceptChallengeRequest = (data) =>
             return false
         })
 
-export const TasksRequest = (id) => {
-    return axios.get(`tasks/user/${id}`)
+export const TasksRequest = (id) =>
+    axios.get(`tasks/user/${id}`)
         .then(response => {
             if (response.status === 200) {
                 return response.data
@@ -70,7 +69,7 @@ export const TasksRequest = (id) => {
         .catch(err => {
             return false
         })
-}
+
 
 export const UpdateTaskRequest = (task) =>
     axios.put(`tasks/`, task)

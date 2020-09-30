@@ -8,7 +8,7 @@ export const displayNotification = (text) => {
                 actions: [
                     {
                         action: 'close', title: 'Закрыть'
-                    }
+                    },
                 ]
             }
             reg.showNotification('Template task', options)

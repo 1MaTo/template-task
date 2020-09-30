@@ -5,7 +5,7 @@ if (typeof importScripts === 'function') {
   if (workbox) {
     console.log('Workbox is loaded');
 
-    const serverUrl = 'https://f1f45c525785.ngrok.io'
+    const serverUrl = 'https://25d3f928c7f7.ngrok.io'
 
 
     // TO FORCE UPDATE SERVICE WORKER IF NEW DETECED
@@ -23,9 +23,10 @@ if (typeof importScripts === 'function') {
     const { StaleWhileRevalidate, NetworkFirst, NetworkOnly } = workbox.strategies;
     const { precacheAndRoute, createHandlerBoundToURL } = workbox.precaching;
     const { setCacheNameDetails } = workbox.core;
-    const { BackgroundSyncPlugin } = workbox.backgroundSync;
+    const { BackgroundSyncPlugin, Queue } = workbox.backgroundSync;
     const { BroadcastUpdatePlugin } = workbox.broadcastUpdate;
 
+    //Rename caches
     setCacheNameDetails({
       prefix: 'template-task',
       suffix: 'v1',
@@ -34,16 +35,17 @@ if (typeof importScripts === 'function') {
       googleAnalytics: 'template-google-analytics-name'
     })
 
+    //Cache static assets
     precacheAndRoute(self.__WB_MANIFEST);
 
-    // handler for caching SPA routing
+    // handler for caching SPA routing like /tasks and /challenges
     const handler = createHandlerBoundToURL('index.html')
     const navigationRoute = new NavigationRoute(handler)
     registerRoute(navigationRoute)
 
     // Background sync settings
     const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
-      maxRetentionTime: 24 * 60 // Retry for max of 24 Hours (specified in minutes)
+      maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
     });
 
     // cache GET api responses SWR with BroadCastUpdate
@@ -57,6 +59,7 @@ if (typeof importScripts === 'function') {
           }),
           'GET'
         ) */
+    //Caching user data, its not updating frequently
     registerRoute(
       new RegExp(`${serverUrl}/users.*`),
       new NetworkFirst({
@@ -67,32 +70,6 @@ if (typeof importScripts === 'function') {
 
     //Handler and route for using indexedDB as data storage for failed request
     const networkOnly = new NetworkOnly();
-    const offlineHandler = async (params) => {
-      try {
-        return await networkOnly.handle(params);
-      } catch (error) {
-        let table;
-        if (params.url.pathname.includes('challenges')) {
-          table = 'challenges'
-        } else if (params.url.pathname.includes('tasks')) {
-          table = 'tasks'
-        }
-        let init = { "status": 200, "statusText": "indexedDB" }
-        const data = await getDataFromBd(table)
-        return new Response(JSON.stringify(data), init)
-      }
-    }
-    registerRoute(
-      new RegExp(`${serverUrl}/challenges`),
-      offlineHandler,
-      'GET'
-    )
-    registerRoute(
-      new RegExp(`${serverUrl}/tasks.*`),
-      offlineHandler,
-      'GET'
-    )
-
     // This function get data from indexedDB
     const getDataFromBd = (table) => new Promise((resolve, reject) => {
       let db;
@@ -106,36 +83,136 @@ if (typeof importScripts === 'function') {
         }
       }
     })
-
-    //Post request to background sync
+    // Handler that takes data from bd when fetch failed
+    const offlineHandler = async (params) => {
+      try {
+        //if online using network request
+        return await networkOnly.handle(params);
+      } catch (error) {
+        //else getting data from IndexedDB
+        let table;
+        if (params.url.pathname.includes('challenges')) {
+          table = 'challenges'
+        } else if (params.url.pathname.includes('tasks')) {
+          table = 'tasks'
+        }
+        let init = { "status": 200, "statusText": "offline" }
+        const data = await getDataFromBd(table)
+        return new Response(JSON.stringify(data), init)
+      }
+    }
+    //This route serves offile challanges
     registerRoute(
-      new RegExp(`${serverUrl}/.*`),
-      new NetworkOnly({
-        plugins: [bgSyncPlugin]
-      }),
+      new RegExp(`${serverUrl}/challenges`),
+      offlineHandler,
+      'GET'
+    )
+    //This route serves offile tasks
+    registerRoute(
+      new RegExp(`${serverUrl}/tasks.*`),
+      offlineHandler,
+      'GET'
+    )
+    //POST request for accept task
+    const networkOnlyWithBgSync = new NetworkOnly({ plugins: [bgSyncPlugin] })
+    const acceptChallengeOfflineHandler = async (params) => {
+      try {
+        return await networkOnlyWithBgSync.handle(params)
+      } catch (error) {
+        return new Response("offline", { "status": 201, "statusText": "offline" })
+      }
+      /* const promiseChain = fetch(params.event.request.clone()).catch((err) => {
+        return queue.pushRequest({ request: params.event.request });
+      });
+      try {
+        return await networkOnly.handle(params);
+      } catch (error) {
+        params.event.waitUntil(promiseChain); 
+      } */
+    }
+    registerRoute(
+      new RegExp(`${serverUrl}/challenges/accept`),
+      acceptChallengeOfflineHandler,
       'POST'
     )
-
-    //Put request to background sync
+    //PUT request to /tasks background sync
     registerRoute(
-      new RegExp(`${serverUrl}/.*`),
+      new RegExp(`${serverUrl}/tasks/.*`),
       new NetworkOnly({
         plugins: [bgSyncPlugin]
       }),
       'PUT'
     )
-
+    //POST request to /tasks background sync
+    registerRoute(
+      new RegExp(`${serverUrl}/tasks/.*`),
+      new NetworkOnly({
+        plugins: [bgSyncPlugin]
+      }),
+      'POST'
+    )
     // Handle Notifications' actions
     self.addEventListener('notificationclick', (e) => {
-      let { notification, action } = e
-      if (action === 'close') {
-        notification.close()
+      e.notification.close()
+      e.waitUntil(clients.matchAll({ type: 'window' }).then(clientsArr => {
+        console.log('sdsd')
+        // If a Window tab matching the targeted URL already exists, focus that;
+        const hadWindowToFocus = clientsArr.some(windowClient => windowClient.url === e.notification.data.url ? (windowClient.focus(), true) : false);
+        // Otherwise, open a new tab to the applicable URL and focus it.
+        if (!hadWindowToFocus) clients.openWindow(e.notification.data.url).then(windowClient => windowClient ? windowClient.focus() : null);
+      }));
+
+    })
+
+    //Display ntification to open client
+    const newContentNotification = () => {
+      if (self.Notification.permission === 'granted') {
+        const notificationObject = {
+          body: 'Данные обновлены',
+          data: { url: self.location.origin + '/template-task/tasks' },
+        };
+        self.registration.showNotification('Ты снова онлайн!', notificationObject);
+      }
+    }
+
+    // Subscribe on sync event
+    self.addEventListener('sync', function(event) {
+      if (event.tag === 'apiQueue') {
+        event.waitUntil(newContentNotification())
       }
     })
 
-    self.addEventListener('push', function (e) {
-      let body;
+    //Open our pwa
+    /* const getInternetConnetionNotification = async (url) => {
+      const allClients = await clients.matchAll({
+        includeUncontrolled: true
+      });
+      let ourClient;
+      // Let's see if we already have a chat window open:
+      for (const client of allClients) {
+        const url = new URL(client.url);
 
+        if (url.pathname === '/template-task/tasks') {
+          // Excellent, let's use it!
+          client.focus();
+          ourClient = client;
+          break;
+        }
+      }
+
+      // If we didn't find an existing chat window,
+      // open a new one:
+      if (!ourClient) {
+        ourClient = await clients.openWindow('/chat/');
+      }
+
+      // Message the client:
+      ourClient.postMessage("New chat messages!");
+    } */
+
+    //Push notifications handler
+    self.addEventListener('push', e => {
+      let body;
       if (e.data) {
         body = e.data.text()
       } else {
@@ -159,6 +236,7 @@ if (typeof importScripts === 'function') {
         self.registration.showNotification('Новое уведомление 😎', options)
       )
     })
+
   } else {
     console.log('Workbox could not be loaded. No Offline support');
   }

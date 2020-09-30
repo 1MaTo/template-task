@@ -15,24 +15,31 @@ import { getUserId, setUserId } from './db/dbApi';
 import { logIn, updateUser } from './redux/reducers/userSlice';
 import { Loading } from './components/loading/Loading';
 import { PagesConstructor } from './PagesConstructor';
-import { update } from './redux/reducers/challengesSlice';
-
+import { clearPandingQueue, update } from './redux/reducers/challengesSlice';
+import { setOnlineStatus } from './redux/reducers/userSlice'
 
 const App = () => {
 
+  const dispatch = useDispatch()
+
   const isLogin = useSelector(state => state.user.isLogin)
   const userId = useSelector(state => state.user.user && state.user.user._id)
+  const isOnline = useSelector(state => state.user.isOnline)
 
   const [isLoading, setLoading] = useState(true)
-
-  const dispatch = useDispatch()
 
   // load tasks challenges if id exist
   useEffect(() => {
     if (isLogin) {
       ChallengesRequest()
-        .then(challenges => {
-          dispatch(update(challenges))
+        .then(({ data, connetionStatus }) => {
+          if (connetionStatus === "offline") {
+            dispatch(setOnlineStatus(false))
+          } else {
+            dispatch(setOnlineStatus(true))
+            dispatch(clearPandingQueue())
+          }
+          dispatch(update(data))
         })
       TasksRequest(userId)
         .then(tasks => {
@@ -41,7 +48,7 @@ const App = () => {
           }
         })
     }
-  }, [isLogin])
+  }, [isLogin,isOnline])
 
 
   // Auto login if id exist

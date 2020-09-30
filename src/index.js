@@ -9,25 +9,7 @@ import './styles/global.scss'
 import { ThemeProvider, StylesProvider, createMuiTheme } from '@material-ui/core/styles'
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://f1f45c525785.ngrok.io'
-
-
-//Handler for BroadCastUpdate
-/* navigator.serviceWorker.addEventListener('message', async (event) => {
-
-  // Optional: ensure the message came from workbox-broadcast-update
-  if (event.data.meta === 'workbox-broadcast-update') {
-    const { cacheName, updatedUrl } = event.data.payload;
-
-    // Do something with cacheName and updatedUrl.
-    // For example, get the cached content and update
-    // the content on the page.
-    console.log(event.data)
-    const cache = await caches.open(cacheName);
-    const updatedResponse = await cache.match(updatedUrl);
-    console.log(updatedResponse.body)
-  }
-}); */
+axios.defaults.baseURL = 'https://25d3f928c7f7.ngrok.io'
 
 const themeMui = createMuiTheme({
   palette: {
