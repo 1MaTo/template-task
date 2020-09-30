@@ -155,7 +155,6 @@ if (typeof importScripts === 'function') {
     self.addEventListener('notificationclick', (e) => {
       e.notification.close()
       e.waitUntil(clients.matchAll({ type: 'window' }).then(clientsArr => {
-        console.log('sdsd')
         // If a Window tab matching the targeted URL already exists, focus that;
         const hadWindowToFocus = clientsArr.some(windowClient => windowClient.url === e.notification.data.url ? (windowClient.focus(), true) : false);
         // Otherwise, open a new tab to the applicable URL and focus it.
@@ -177,7 +176,7 @@ if (typeof importScripts === 'function') {
 
     // Subscribe on sync event
     self.addEventListener('sync', function(event) {
-      if (event.tag === 'apiQueue') {
+      if (event.tag === 'workbox-background-sync:apiQueue') {
         event.waitUntil(newContentNotification())
       }
     })

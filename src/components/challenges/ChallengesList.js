@@ -14,7 +14,6 @@ export const ChallengesList = () => {
     useEffect(() => {
         ChallengesRequest()
             .then(({ data, connetionStatus }) => {
-                console.log('tut')
                 if (connetionStatus === "offline") {
                     dispatch(setOnlineStatus(false))
                 } else {
