@@ -185,6 +185,7 @@ if (typeof importScripts === 'function') {
 
     // Subscribe on sync event
     self.addEventListener('sync', function(event) {
+      console.log(event)
       if (event.tag === 'apiQueue') {
         event.waitUntil(newContentNotification())
       }
