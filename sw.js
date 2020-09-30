@@ -46,6 +46,14 @@ if (typeof importScripts === 'function') {
     // Background sync settings
     const bgSyncPlugin = new BackgroundSyncPlugin('apiQueue', {
       maxRetentionTime: 24 * 60, // Retry for max of 24 Hours (specified in minutes)
+      onSync: async ({queue}) => {
+        try {
+          queue.replayRequests()
+          newContentNotification()
+        } catch (error) {
+          throw new Error(error)
+        }
+      }
     });
 
     // cache GET api responses SWR with BroadCastUpdate
